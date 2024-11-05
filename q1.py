@@ -1,0 +1,145 @@
+import cv2
+from Load import folder_images, load_renew_tag
+import numpy as np
+import os
+
+
+class CameraCalibration:
+    def __init__(self):
+        self.ret = None
+        self.camera_matrix = None
+        self.distortion_coeffs = None
+        self.rvecs = None
+        self.tvecs = None
+        self.q1_renew_tag = -1
+        self.obj_points = []
+        self.img_points = []
+        self.square_size = 0.02
+        self.screen_width = 1024  
+        self.screen_height = 1024
+        self.pattern_size = (11, 8) 
+        self.object_points = np.zeros((self.pattern_size[0] * self.pattern_size[1], 3), np.float32)
+        self.object_points[:, :2] = np.mgrid[0:self.pattern_size[0], 0:self.pattern_size[1]].T.reshape(-1, 2) * self.square_size
+        self.corner = None
+        
+    def Find_corner(self):
+        if not folder_images:
+            print("No images loaded.")
+            return
+        
+        else:
+            print("processing Find_corner...")
+            for img in folder_images:
+                
+                grayimg = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+                
+                # Define the number of inner corners in the chessboard (e.g., 8x6)
+                pattern_size = (11, 8)
+                
+                # Find chessboard corners
+                ret, self.corners = cv2.findChessboardCorners(grayimg, pattern_size)           
+                if ret:
+                    print("Chessboard corners detected!")
+                    # Draw the corners on the image for visualization
+                    cv2.drawChessboardCorners(grayimg, pattern_size, self.corners, ret)
+                    
+                    resized_img = cv2.resize(grayimg, (self.screen_width, self.screen_height))
+                    
+                    cv2.imshow('Corners', resized_img)
+                    cv2.waitKey(0)
+                    cv2.destroyAllWindows()
+                else:
+                    print("Chessboard corners not found.")
+                    
+    def Find_Intrinsic(self):
+        if not folder_images:
+            print("No images loaded.")
+            return
+        
+        else:
+            print("processing Find_Intrinsic...")
+            self.calibrate()
+            
+            # Output the intrinsic matrix
+            print("Intrinsic matrix:")
+            print(self.camera_matrix)
+    
+    def Find_Extrinsic(self,value):  
+        if value <= 0 or value > len(folder_images):
+            print("Index out of range")
+            return
+        if not folder_images:
+            print("No images loaded.")
+            return
+        
+        else:
+            print("processing Find_Extrinsic...")
+            self.calibrate()
+                
+            rotation_vector = self.rvecs[value - 1]
+            translation_vector = self.tvecs[value - 1]
+            rotation_matrix, _ = cv2.Rodrigues(rotation_vector)
+        
+            # Create the extrinsic matrix
+            extrinsic_matrix = np.hstack((rotation_matrix, translation_vector.reshape(-1, 1)))
+            print(f"Extrinsic matrix of {value}.bmp.")
+            print(extrinsic_matrix)
+    
+    def Find_Distortion(self,value):
+        if not folder_images:
+            print("No images loaded.")
+            return
+        
+        else:
+            print("processing Find_Extrinsic...")
+            self.calibrate()
+                
+            print(f"Distortion matrix of {value}.bmp.")
+            print(self.distortion_coeffs)
+            
+    def Show_Result(self,value):
+        if value <= 0 or value > 15:
+            print("Index out of range")
+            return
+        
+        if not folder_images:
+            print("No images loaded.")
+            return
+        
+        else:
+            self.calibrate()
+            result_img = cv2.undistort(folder_images[value-1], self.camera_matrix, self.distortion_coeffs)
+            
+            distorted_img = cv2.resize(folder_images[value-1], (self.screen_width, self.screen_height))
+            undistorted_img = cv2.resize(result_img, (self.screen_width, self.screen_height))
+            
+            # Display the original and undistorted images
+            cv2.imshow('Distorted Image', distorted_img)
+            cv2.imshow('Undistorted Image', undistorted_img)
+            cv2.waitKey(0)
+            cv2.destroyAllWindows()
+            
+            
+    def calibrate(self):
+        if not folder_images:
+            print("No images loaded.")
+            return
+        if (self.q1_renew_tag != load_renew_tag):
+            # Arrays to store object points and image points from all images
+            self.obj_points.clear()
+            self.img_points.clear()
+                        
+            for img in folder_images:
+                grayimg = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+            
+                # Find the chessboard corners
+                ret, self.corners = cv2.findChessboardCorners(grayimg, self.pattern_size)
+                
+                if ret:
+                    self.obj_points.append( self.object_points)
+                    self.img_points.append(self.corners)
+                    
+            # Calibrate the camera
+            self.ret, self.camera_matrix, self.distortion_coeffs, self.rvecs, self.tvecs = cv2.calibrateCamera(self.obj_points, self.img_points, grayimg.shape[::-1], None, None)
+           
+            self.q1_renew_tag = load_renew_tag
