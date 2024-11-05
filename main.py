@@ -42,7 +42,6 @@ class Ui_Dialog(object):
         
     def Show_word_func(self):
         AR.vertical_mode = False
-        print(self.text)
         AR.Show_on_board(self.text)
         
     def Show_word_vertical_func(self):
@@ -54,7 +53,6 @@ class Ui_Dialog(object):
         
     def textEdit_changed(self):
         self.text = self.textEdit.toPlainText()
-        print("textEdit_changed:",self.text)
         
         
     def setupUi(self, Dialog):
