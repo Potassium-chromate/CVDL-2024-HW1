@@ -1,4 +1,3 @@
-from Load import folder_images
 from q1 import CameraCalibration
 
 
@@ -6,7 +5,7 @@ import cv2
 import numpy as np
 
 class Argumented_Reality:
-    def __init__(self, vertical_mode = False):
+    def __init__(self, Load_Data, vertical_mode = False):
         self.alph_loc = np.array([[7, 5, 0],
                     [4, 5, 0],
                     [1, 5, 0],
@@ -37,10 +36,12 @@ class Argumented_Reality:
                     [2, 2, 0]])
         self.CB = None
         self.vertical_mode = vertical_mode
+        self.folder_images = Load_Data.folder_images
+        self.Load_Data = Load_Data
         
     def Show_on_board(self,words):
         # Load images and calibrate the camera
-        self.CB = CameraCalibration()
+        self.CB = CameraCalibration(self.Load_Data)
         self.CB.calibrate()
         
         # Open the file with the alphabet data
@@ -49,7 +50,7 @@ class Argumented_Reality:
         img_counter = 0
         imgpoints = []
         
-        for img in folder_images:
+        for img in self.folder_images:
             img = img.copy()
             word_counter = 0
             for char in words:

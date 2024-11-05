@@ -1,11 +1,10 @@
 import cv2
-from Load import folder_images, load_renew_tag
 import numpy as np
 import os
 
 
 class CameraCalibration:
-    def __init__(self):
+    def __init__(self, Load_Data):
         self.ret = None
         self.camera_matrix = None
         self.distortion_coeffs = None
@@ -21,15 +20,17 @@ class CameraCalibration:
         self.object_points = np.zeros((self.pattern_size[0] * self.pattern_size[1], 3), np.float32)
         self.object_points[:, :2] = np.mgrid[0:self.pattern_size[0], 0:self.pattern_size[1]].T.reshape(-1, 2) * self.square_size
         self.corner = None
+        self.load_renew_tag = Load_Data.load_renew_tag
+        self.folder_images = Load_Data.folder_images
         
     def Find_corner(self):
-        if not folder_images:
+        if not self.folder_images:
             print("No images loaded.")
             return
         
         else:
             print("processing Find_corner...")
-            for img in folder_images:
+            for img in self.folder_images:
                 
                 grayimg = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
                 
@@ -52,7 +53,7 @@ class CameraCalibration:
                     print("Chessboard corners not found.")
                     
     def Find_Intrinsic(self):
-        if not folder_images:
+        if not self.folder_images:
             print("No images loaded.")
             return
         
@@ -65,10 +66,10 @@ class CameraCalibration:
             print(self.camera_matrix)
     
     def Find_Extrinsic(self,value):  
-        if value <= 0 or value > len(folder_images):
+        if value <= 0 or value > len(self.folder_images):
             print("Index out of range")
             return
-        if not folder_images:
+        if not self.folder_images:
             print("No images loaded.")
             return
         
@@ -86,7 +87,7 @@ class CameraCalibration:
             print(extrinsic_matrix)
     
     def Find_Distortion(self,value):
-        if not folder_images:
+        if not self.folder_images:
             print("No images loaded.")
             return
         
@@ -102,15 +103,15 @@ class CameraCalibration:
             print("Index out of range")
             return
         
-        if not folder_images:
+        if not self.folder_images:
             print("No images loaded.")
             return
         
         else:
             self.calibrate()
-            result_img = cv2.undistort(folder_images[value-1], self.camera_matrix, self.distortion_coeffs)
+            result_img = cv2.undistort(self.folder_images[value-1], self.camera_matrix, self.distortion_coeffs)
             
-            distorted_img = cv2.resize(folder_images[value-1], (self.screen_width, self.screen_height))
+            distorted_img = cv2.resize(self.folder_images[value-1], (self.screen_width, self.screen_height))
             undistorted_img = cv2.resize(result_img, (self.screen_width, self.screen_height))
             
             # Display the original and undistorted images
@@ -121,15 +122,15 @@ class CameraCalibration:
             
             
     def calibrate(self):
-        if not folder_images:
+        if not self.folder_images:
             print("No images loaded.")
             return
-        if (self.q1_renew_tag != load_renew_tag):
+        if (self.q1_renew_tag != self.load_renew_tag):
             # Arrays to store object points and image points from all images
             self.obj_points.clear()
             self.img_points.clear()
                         
-            for img in folder_images:
+            for img in self.folder_images:
                 grayimg = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
             
                 # Find the chessboard corners
@@ -142,4 +143,4 @@ class CameraCalibration:
             # Calibrate the camera
             self.ret, self.camera_matrix, self.distortion_coeffs, self.rvecs, self.tvecs = cv2.calibrateCamera(self.obj_points, self.img_points, grayimg.shape[::-1], None, None)
            
-            self.q1_renew_tag = load_renew_tag
+            self.q1_renew_tag = self.load_renew_tag

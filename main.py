@@ -11,11 +11,14 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
 from q1 import CameraCalibration
 from q2 import Argumented_Reality
-import Load
+from q3 import Stereo_Disparity_Map
+from Load import Load_Data
 
+LD =  Load_Data()
+CB = CameraCalibration(LD)
+AR = Argumented_Reality(LD)
+SDM = Stereo_Disparity_Map(LD)
 
-CB = CameraCalibration()
-AR = Argumented_Reality()
 
 class Ui_Dialog(object):
     def __init__(self):
@@ -23,7 +26,13 @@ class Ui_Dialog(object):
         self.text = ""
         
     def Loadfolder_func(self):
-        Load.Loadfolder()
+        LD.Loadfolder()
+    
+    def Load_left_func(self):
+        LD.LoadSingleImage(left_side = True)
+    
+    def Load_right_func(self):
+        LD.LoadSingleImage(left_side = False)
         
     def Find_corner_func(self):
         CB.Find_corner()
@@ -47,6 +56,9 @@ class Ui_Dialog(object):
     def Show_word_vertical_func(self):
         AR.vertical_mode = True
         AR.Show_on_board(self.text)
+    
+    def Stereo_disparity_map_func(self):
+        SDM.Show_map()
     
     def on_spin_value_changed(self, value):
         self.spin_value = value
@@ -75,9 +87,19 @@ class Ui_Dialog(object):
         self.LoadImage_L = QtWidgets.QPushButton(self.verticalLayoutWidget)
         self.LoadImage_L.setObjectName("LoadImage_L")
         self.LoadImage.addWidget(self.LoadImage_L)
+        ####### Load left image #######
+        
+        self.LoadImage_L.clicked.connect(self.Load_left_func)
+        
+        ##########################
         self.LoadImage_R = QtWidgets.QPushButton(self.verticalLayoutWidget)
         self.LoadImage_R.setObjectName("LoadImage_R")
         self.LoadImage.addWidget(self.LoadImage_R)
+        ####### Load right image #######
+        
+        self.LoadImage_R.clicked.connect(self.Load_right_func)
+        
+        ##########################
         self.label = QtWidgets.QLabel(Dialog)
         self.label.setGeometry(QtCore.QRect(20, 10, 61, 21))
         self.label.setObjectName("label")
@@ -153,6 +175,11 @@ class Ui_Dialog(object):
         self.verticalLayout_5.setObjectName("verticalLayout_5")
         self.Stereo_disparity_map = QtWidgets.QPushButton(self.verticalLayoutWidget_3)
         self.Stereo_disparity_map.setObjectName("Stereo_disparity_map")
+        ####### Stereo_disparity_map #######
+        
+        self.Stereo_disparity_map.clicked.connect(self.Stereo_disparity_map_func)
+        
+        ##########################
         self.verticalLayout_5.addWidget(self.Stereo_disparity_map)
         self.label_5 = QtWidgets.QLabel(Dialog)
         self.label_5.setGeometry(QtCore.QRect(530, 10, 121, 16))
