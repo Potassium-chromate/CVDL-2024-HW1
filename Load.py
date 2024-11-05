@@ -7,6 +7,8 @@ import cv2
 import random
 
 folder_images = []
+Image_L = None
+Image_R = None
 load_renew_tag = 0
 def Loadfolder():
     global load_renew_tag
@@ -37,5 +39,28 @@ def Loadfolder():
     load_renew_tag = random.randint(1, 10000000)
     return
 
+def LoadSingleImage(left_side = True):
+    global Image_L, Image_R
+    
+    root = tk.Tk()
+    root.withdraw()
+    img_path = filedialog.askopenfilename(
+        title="Select Image",
+        filetypes=[("Image Files", "*.jpg;*.jpeg;*.png;*.bmp;*.tiff")]
+    )
+    if img_path:
+        print("Selected image:", img_path)
+    else:
+        print("No image selected.")
+    
+    img = Image.open(img_path) 
+    img_cv = np.array(img)
+    img_cv = cv2.cvtColor(img_cv, cv2.COLOR_RGB2BGR)
+    
+    if left_side:
+        Image_L = img_cv
+    else:
+        Image_R = img_cv
+        
 if __name__ == "__main__":
    Loadfolder()
