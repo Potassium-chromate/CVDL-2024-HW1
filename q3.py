@@ -21,14 +21,15 @@ class Stereo_Disparity_Map:
             print("Image_R not loaded!")
             return
         
+        # Load images from the Load_Data instance
         self.Image_L = self.Load_Data.Image_L
         self.Image_R = self.Load_Data.Image_R
         
         stereo = cv2.StereoBM.create(self.numDisparities, self.blockSize)
+        # Compute the disparity map using the StereoBM object
         disparity = stereo.compute(self.Image_L, self.Image_R)
-        #disparity_normalized = cv2.normalize(disparity, disparity, alpha=0, beta=255, norm_type=cv2.NORM_MINMAX)
-        #disparity_normalized = np.uint8(disparity_normalized)
         
+        # Resize the images
         self.screen_width = int(np.shape(self.Image_R)[1]/4)
         self.screen_height = int(np.shape(self.Image_R)[0]/4)
         
@@ -36,6 +37,7 @@ class Stereo_Disparity_Map:
         resized_Image_L = cv2.resize(self.Image_L, (self.screen_width, self.screen_height))
         resized_Image_R = cv2.resize(self.Image_R, (self.screen_width, self.screen_height))
         
+        # Display the result
         cv2.imshow('ImgL', resized_Image_L)
         cv2.imshow('ImgR', resized_Image_R)
         cv2.imshow('Disparity Map', resized_disparity)

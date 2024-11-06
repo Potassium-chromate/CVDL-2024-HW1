@@ -38,7 +38,7 @@ class Load_Data:
                 img_cv = cv2.cvtColor(img_cv, cv2.COLOR_RGB2BGR)
                 self.folder_images.append(img_cv)
     
-        # Now images contains all loaded image objects
+        
         print(f"Loaded {len(self.folder_images)} images.")
         self.load_renew_tag = random.randint(1, 10000000)
         return

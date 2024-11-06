@@ -30,19 +30,18 @@ class CameraCalibration:
             return
         
         else:
-            print("processing Find_corner...")
             for img in self.folder_images:
                 
                 grayimg = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
                 
-                # Define the number of inner corners in the chessboard (e.g., 8x6)
+                # Define the number of inner corners in the chessboard
                 pattern_size = (11, 8)
                 
                 # Find chessboard corners
                 ret, self.corners = cv2.findChessboardCorners(grayimg, pattern_size)           
                 if ret:
                     print("Chessboard corners detected!")
-                    # Draw the corners on the image for visualization
+                    # Draw the corners on the image
                     cv2.drawChessboardCorners(grayimg, pattern_size, self.corners, ret)
                     
                     resized_img = cv2.resize(grayimg, (self.screen_width, self.screen_height))
@@ -59,7 +58,6 @@ class CameraCalibration:
             return
         
         else:
-            print("processing Find_Intrinsic...")
             self.calibrate()
             
             # Output the intrinsic matrix
@@ -77,7 +75,6 @@ class CameraCalibration:
             return
         
         else:
-            print("processing Find_Extrinsic...")
             self.calibrate()
                 
             rotation_vector = self.rvecs[value - 1]
@@ -98,7 +95,6 @@ class CameraCalibration:
             return
         
         else:
-            print("processing Find_Extrinsic...")
             self.calibrate()
                 
             print(f"Distortion matrix of {value}.bmp.")
@@ -134,7 +130,7 @@ class CameraCalibration:
             print("No images loaded.")
             return
         if (self.q1_renew_tag != self.load_renew_tag):
-            # Arrays to store object points and image points from all images
+            # Initialize
             self.obj_points.clear()
             self.img_points.clear()
                         

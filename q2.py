@@ -1,5 +1,5 @@
 from q1 import CameraCalibration
-
+from Load import Load_Data
 
 import cv2
 import numpy as np
@@ -44,7 +44,7 @@ class Argumented_Reality:
         self.CB = CameraCalibration(self.Load_Data)
         self.CB.calibrate()
         
-        # Open the file with the alphabet data
+        # Open the alphabet data
         fs = cv2.FileStorage('alphabet_db_onboard.txt', cv2.FILE_STORAGE_READ)
         
         img_counter = 0
@@ -94,7 +94,7 @@ class Argumented_Reality:
                     # project character points onto the image plane
                     newCharPoints, _ = cv2.projectPoints(re_charPoints, rvec, tvec, self.CB.camera_matrix, self.CB.distortion_coeffs)
                 
-                    # Display the letter on the first image in folder_images   
+                    # Display setting
                     color = (0, 255, 0)
                     thickness = 9
 
@@ -121,6 +121,8 @@ class Argumented_Reality:
         cv2.destroyAllWindows()
             
 if __name__ == "__main__":
-    AR = Argumented_Reality(vertical_mode = True)
+    LD = Load_Data()
+    LD.Loadfolder()
+    AR = Argumented_Reality(LD, vertical_mode = True)
     words = "TEST"
     AR.Show_on_board(words)
