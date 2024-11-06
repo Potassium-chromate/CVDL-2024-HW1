@@ -1,6 +1,45 @@
 # CVDL-2024-HW1
-## Troubleshooting
+## Overview
+This repository contains code for **CVDL-2024-HW1**, focusing on computer vision and deep learning tasks such as stereo disparity mapping, extrinsic matrix calculation, key point matching, and more. These implementations are developed using Python, OpenCV, and other supporting libraries.
 
+## Features
+- **Load Images from Folder:** Load multiple images from a specified folder.
+- **Stereo Disparity Map:** Generate and display disparity maps from stereo images.
+- **Key Point Detection and Matching:** Detect and match key points between images.
+- **Extrinsic Matrix Calculation:** Calculate and display extrinsic matrices for loaded images.
+- **Augmented Reality:** Display alphabat on the chest board
+
+## Installation
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/Potassium-chromate/CVDL-2024-HW1.git
+   cd CVDL-2024-HW1
+   ```
+2. Install the required Python libraries:
+   ```bash
+   pip install -r requirements.txt
+   ```
+## Usage
+To start:
+```bash
+python main.py
+```
+
+## Dependencies
+- Python 3.10
+- **OpenCV:** For computer vision functions and operations
+- **NumPy:** For array manipulations
+- **Pillow:** For image handling in various formats
+- **Tkinter:** For GUI elements and displaying results
+
+## Project Structure
+- **main.py:** Main script for running the project.
+- **q1.py:** Module for finding Intrinsic matrix and Extrinsic matrix.
+- **q2.py:** Module for Augmented Reality, which project words onto the chest board.
+- **q3.py:** Module for Stereo Disparity Map.
+- **q4.py:** Module for Keypoints processing.
+
+## Troubleshooting
 ### Original problem 1
 In the `cv2.projectPoints function`, the `charPoints` array needs at least four distinct points in three different directions (vectors) to calculate a valid projection. If `charPoints` is used directly, some alphabets with fewer than three points (such as the letter "I", which only has two points) will cause issues.
 Example for "I":
@@ -60,3 +99,6 @@ If you do not have the pre-calibrated camera parameters or need to estimate the 
    ```python
    newCharPoints = cv2.projectPoints(charPoints, ins, dist, rvec, tvec)
     ```
+
+## License
+This project is licensed under the MIT License. See `LICENSE` for details.
