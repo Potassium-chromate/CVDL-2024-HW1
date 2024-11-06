@@ -15,8 +15,7 @@ class Load_Data:
         self.Image_R = None
         self.load_renew_tag = 0
 
-    def Loadfolder(self):
-        global load_renew_tag
+    def Loadfolder(self):   
         self.folder_images.clear()
         # Initialize the root window
         root = tk.Tk()
@@ -41,7 +40,7 @@ class Load_Data:
     
         # Now images contains all loaded image objects
         print(f"Loaded {len(self.folder_images)} images.")
-        load_renew_tag = random.randint(1, 10000000)
+        self.load_renew_tag = random.randint(1, 10000000)
         return
     
     def LoadSingleImage(self, left_side = True):

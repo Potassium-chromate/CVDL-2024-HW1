@@ -12,12 +12,14 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 from q1 import CameraCalibration
 from q2 import Argumented_Reality
 from q3 import Stereo_Disparity_Map
+from q4 import SIFT
 from Load import Load_Data
 
 LD =  Load_Data()
 CB = CameraCalibration(LD)
 AR = Argumented_Reality(LD)
 SDM = Stereo_Disparity_Map(LD)
+SIFT = SIFT(LD)
 
 
 class Ui_Dialog(object):
@@ -60,6 +62,12 @@ class Ui_Dialog(object):
     def Stereo_disparity_map_func(self):
         SDM.Show_map()
     
+    def Keypoints_func(self):
+        SIFT.Keypoints()
+        
+    def Matched_keypoints_func(self):
+        SIFT.MatchKeypoints()
+        
     def on_spin_value_changed(self, value):
         self.spin_value = value
         
@@ -193,15 +201,35 @@ class Ui_Dialog(object):
         self.Load_Image_1 = QtWidgets.QPushButton(self.verticalLayoutWidget_4)
         self.Load_Image_1.setObjectName("Load_Image_1")
         self.verticalLayout_6.addWidget(self.Load_Image_1)
+        ####### Load_Image_1 #######
+        
+        self.Load_Image_1.clicked.connect(self.Load_left_func)
+        
+        ##########################
         self.Laod_Image_2 = QtWidgets.QPushButton(self.verticalLayoutWidget_4)
         self.Laod_Image_2.setObjectName("Laod_Image_2")
         self.verticalLayout_6.addWidget(self.Laod_Image_2)
+        ####### Load_Image_1 #######
+        
+        self.Laod_Image_2.clicked.connect(self.Load_right_func)
+        
+        ##########################
         self.Keypoints = QtWidgets.QPushButton(self.verticalLayoutWidget_4)
         self.Keypoints.setObjectName("Keypoints")
         self.verticalLayout_6.addWidget(self.Keypoints)
+        ####### Find Keypoints #######
+        
+        self.Keypoints.clicked.connect(self.Keypoints_func)
+        
+        ##########################
         self.Matched_keypoints = QtWidgets.QPushButton(self.verticalLayoutWidget_4)
         self.Matched_keypoints.setObjectName("Matched_keypoints")
         self.verticalLayout_6.addWidget(self.Matched_keypoints)
+        ####### Matched Keypoints #######
+        
+        self.Matched_keypoints.clicked.connect(self.Matched_keypoints_func)
+        
+        ##########################
         self.label_6 = QtWidgets.QLabel(Dialog)
         self.label_6.setGeometry(QtCore.QRect(350, 290, 111, 16))
         self.label_6.setObjectName("label_6")
