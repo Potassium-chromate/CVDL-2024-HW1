@@ -1,6 +1,7 @@
 import cv2
 import numpy as np
-import os
+import tkinter as tk
+from tkinter import scrolledtext
 
 
 class CameraCalibration:
@@ -64,6 +65,8 @@ class CameraCalibration:
             # Output the intrinsic matrix
             print("Intrinsic matrix:")
             print(self.camera_matrix)
+            
+            self.display_window("Intrinsic matrix", self.camera_matrix)
     
     def Find_Extrinsic(self,value):  
         if value <= 0 or value > len(self.folder_images):
@@ -85,6 +88,9 @@ class CameraCalibration:
             extrinsic_matrix = np.hstack((rotation_matrix, translation_vector.reshape(-1, 1)))
             print(f"Extrinsic matrix of {value}.bmp.")
             print(extrinsic_matrix)
+            
+            title = "Extrinsic matrix of " + str(value) +" .bmp."
+            self.display_window(title, extrinsic_matrix)
     
     def Find_Distortion(self,value):
         if not self.folder_images:
@@ -97,6 +103,8 @@ class CameraCalibration:
                 
             print(f"Distortion matrix of {value}.bmp.")
             print(self.distortion_coeffs)
+            
+            self.display_window("Distortion matrix", self.distortion_coeffs)
             
     def Show_Result(self,value):
         if value <= 0 or value > 15:
@@ -144,3 +152,17 @@ class CameraCalibration:
             self.ret, self.camera_matrix, self.distortion_coeffs, self.rvecs, self.tvecs = cv2.calibrateCamera(self.obj_points, self.img_points, grayimg.shape[::-1], None, None)
            
             self.q1_renew_tag = self.load_renew_tag
+    
+    def display_window(self,title,text):
+        window = tk.Tk()
+        window.title(title)
+     
+        # Add a scrolled text widget to display the matrix
+        text_area = scrolledtext.ScrolledText(window, wrap=tk.WORD, width=80, height=10, font=("Helvetica", 10))
+        text_area.pack(pady=10, padx=10)
+     
+        # Insert the extrinsic matrix into the text widget
+        text_area.insert(tk.END, f"{text}")
+        text_area.config(state=tk.DISABLED)  # Make the text read-only
+     
+        window.mainloop()
